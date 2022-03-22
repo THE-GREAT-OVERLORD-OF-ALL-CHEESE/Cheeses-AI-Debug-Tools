@@ -113,7 +113,7 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
             {
                 if (contact != null)
                 {
-                    if (contact.radarActor != null && contact.radarActor.alive)
+                    if (contact.radarActor != null && contact.radarActor.alive && contact.active)
                     {
                         debugString += contact.radarActor.actorName + "\n";
                         GetOrAddDetectionInfo(detectedActors, contact.radarActor).rwr = true;
@@ -280,9 +280,9 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
         debugLines.UpdateLines();
     }
 
-    public override void Enable()
+    public override void Dissable()
     {
-        base.Enable();
+        base.Dissable();
 
         debugLines.DestroyAllLineRenderers();
     }

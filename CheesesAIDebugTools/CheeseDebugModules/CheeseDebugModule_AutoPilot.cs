@@ -10,14 +10,19 @@ public class CheeseDebugModule_AutoPilot : CheeseDebugModule
 {
     public CheeseDebugModule_AutoPilot(string name, KeyCode keyCode) : base(name, keyCode)
     {
-
+        debugLines = new DebugLineManager();
     }
+
+    public Traverse autoPilotTraverse;
+    public DebugLineManager debugLines;
 
     public override void GetDebugText(ref string debugString, Actor actor)
     {
         AutoPilot autoPilot = actor.gameObject.GetComponent<AutoPilot>();
         if (autoPilot != null)
         {
+            autoPilotTraverse = Traverse.Create(autoPilot);
+
             if (autoPilot.flightInfo.isLanded)
             {
                 debugString += "We are touching the ground!\n";
@@ -47,5 +52,43 @@ public class CheeseDebugModule_AutoPilot : CheeseDebugModule
         {
             debugString += "This is not an AI aircraft...";
         }
+    }
+
+    public override void LateUpdate(Actor actor)
+    {
+        base.LateUpdate(actor);
+
+        AutoPilot autoPilot = actor.gameObject.GetComponent<AutoPilot>();
+        if (autoPilot != null)
+        {
+            autoPilotTraverse = Traverse.Create(autoPilot);
+
+            debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { autoPilot.referenceTransform.position, autoPilot.targetPosition },
+                1, Color.white));
+
+            debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { autoPilot.referenceTransform.position, autoPilot.referenceTransform.position + autoPilot.rb.velocity.normalized * 50 },
+                1, Color.red));
+            debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { autoPilot.referenceTransform.position, autoPilot.referenceTransform.position + autoPilot.referenceTransform.forward * 50 },
+                1, Color.black));
+
+            if ((bool)autoPilotTraverse.Field("useRollOverride").GetValue())
+            {
+                Vector3 overrideRollTarget = (Vector3)autoPilotTraverse.Field("overrideRollTarget").GetValue();
+
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { autoPilot.referenceTransform.position, autoPilot.referenceTransform.position + overrideRollTarget.normalized * 50 },
+                    1, Color.white));//this roll target is not displayed correctly, fix later
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { autoPilot.referenceTransform.position, autoPilot.referenceTransform.position + autoPilot.referenceTransform.up * 50 },
+                    1, Color.black));
+            }
+        }
+
+        debugLines.UpdateLines();
+    }
+
+    public override void Dissable()
+    {
+        base.Dissable();
+
+        debugLines.DestroyAllLineRenderers();
     }
 }

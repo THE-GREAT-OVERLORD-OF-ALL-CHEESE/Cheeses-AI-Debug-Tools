@@ -41,6 +41,18 @@ public class DebugLineManager
         lineInfos.Add(info);
     }
 
+    public void AddCircle(DebugLineInfo info, Vector3 center, float radius, int segments)
+    {
+        Vector3[] pointList = new Vector3[segments + 1];
+        for (int i = 0; i < pointList.Length; i++)
+        {
+            pointList[i] = center + Quaternion.Euler(0, (360f / (float)segments) * (float)i, 0) * Vector3.forward * radius;
+        }
+        info.points = pointList;
+
+        lineInfos.Add(info);
+    }
+
     public void UpdateLines()
     {
         if (lineInfos.Count != lineRenderers.Count) {
@@ -50,6 +62,7 @@ public class DebugLineManager
 
         for (int i = 0; i < lineInfos.Count; i++)
         {
+            lineRenderers[i].positionCount = lineInfos[i].points.Length;
             lineRenderers[i].SetPositions(lineInfos[i].points);
             lineRenderers[i].widthMultiplier = lineInfos[i].width;
             lineRenderers[i].material.color = lineInfos[i].colour;

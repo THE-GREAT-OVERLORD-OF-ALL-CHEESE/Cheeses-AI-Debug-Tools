@@ -61,10 +61,11 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
     }
 
     public Traverse aiPilotTraverse;
+    public DebugLineManager debugLines;
 
     public CheeseDebugModule_AIPilot(string name, KeyCode keyCode) : base(name, keyCode)
     {
-
+        debugLines = new DebugLineManager();
     }
 
     public override void GetDebugText(ref string debugString, Actor actor)
@@ -97,6 +98,8 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
             debugString += "\n";
             debugString += "Rearm after landing: " + ((bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()).ToString() + "\n";
             debugString += "Take off after landing: " + ((bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()).ToString() + "\n";
+
+            debugString += "Orbit radius: " + aiPilot.orbitRadius;
 
             debugString += "\n";
 
@@ -144,5 +147,57 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
         {
             debugString += "This is not an AI aircraft...";
         }
+
+        AIAircraftSpawn aircraftSpawn = actor.gameObject.GetComponent<AIAircraftSpawn>();
+        if (aircraftSpawn != null)
+        {
+            if (GUI.Button(new Rect(500, 100, 100, 20), "Take Off"))
+            {
+                aircraftSpawn.TakeOff();
+            }
+            if (GUI.Button(new Rect(500, 120, 100, 20), "Land"))
+            {
+                aircraftSpawn.RearmAt(new AirportReference("map:0"));//airbase map:0 may not exist, change this to pick the closest airbase, if one exists
+            }
+        }
+    }
+
+    public override void LateUpdate(Actor actor)
+    {
+        base.LateUpdate(actor);
+
+        AIPilot aiPilot = actor.gameObject.GetComponent<AIPilot>();
+        if (aiPilot != null)
+        {
+            aiPilotTraverse = Traverse.Create(aiPilot);
+
+            if (aiPilot.orbitTransform != null) {
+                Vector3 groundPos = aiPilot.orbitTransform.position;
+                groundPos.y = WaterPhysics.waterHeight;
+
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { groundPos, groundPos + aiPilot.defaultAltitude * Vector3.up },
+                    10, Color.cyan));
+                debugLines.AddCircle(new DebugLineManager.DebugLineInfo(null,
+                    10, Color.cyan), groundPos + aiPilot.defaultAltitude * Vector3.up, aiPilot.orbitRadius, 36);
+            }
+
+            Transform landOnPadTf = (Transform)aiPilotTraverse.Field("landOnPadTf").GetValue();
+            if (landOnPadTf != null)
+            {
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { landOnPadTf.position, landOnPadTf.position + Vector3.up * 20 },
+                    1, Color.blue));
+                debugLines.AddCircle(new DebugLineManager.DebugLineInfo(null,
+                    1, Color.blue), landOnPadTf.position, 20, 36);
+            }
+        }
+
+        debugLines.UpdateLines();
+    }
+
+    public override void Dissable()
+    {
+        base.Dissable();
+
+        debugLines.DestroyAllLineRenderers();
     }
 }
