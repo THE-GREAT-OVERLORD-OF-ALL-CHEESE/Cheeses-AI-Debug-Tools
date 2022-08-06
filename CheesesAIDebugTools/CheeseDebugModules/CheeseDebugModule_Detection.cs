@@ -26,8 +26,18 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
 
     public DebugLineManager debugLines;
 
+    public bool showDetectionText = true;
+    public bool showRadarLines = true;
+    public bool showRWRLines = true;
+    public bool showVisualLines = true;
+    public bool showTGPLines = true;
+    public bool showMWSLines = true;
+
     public override void GetDebugText(ref string debugString, Actor actor)
     {
+        if (actor == null)
+            return;
+
         Dictionary<Actor, DetectionInfo> detectedActors = new Dictionary<Actor, DetectionInfo>();
 
         if (actor.gameObject.GetComponentInChildren<Radar>() != null)
@@ -130,48 +140,52 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
             debugString += "No RWR.\n";
         }
 
-        foreach (KeyValuePair<Actor, DetectionInfo> detectedActorKvp in detectedActors)
+        if (showDetectionText)
         {
-            DetectionInfo detectionInfo = detectedActorKvp.Value;
+            foreach (KeyValuePair<Actor, DetectionInfo> detectedActorKvp in detectedActors)
+            {
+                DetectionInfo detectionInfo = detectedActorKvp.Value;
 
-            string detectionString = "";
-            List<string> detectionTypes = new List<string>();
+                string detectionString = "";
+                List<string> detectionTypes = new List<string>();
 
-            if (detectionInfo.radarLocked)
-            {
-                detectionString += "RADAR LOCKED\n";
-            }
-            if (detectionInfo.TGPLocked)
-            {
-                detectionString += "TGP LOCKED\n";
-            }
-            if (detectionInfo.rwrLocked)
-            {
-                detectionString += $"RADAR LOCK FROM {detectionInfo.detectedActor.actorName}\n";
-            }
-            if (detectionInfo.radar)
-            {
-                detectionTypes.Add("Radar");
-            }
-            if (detectionInfo.visual)
-            {
-                detectionTypes.Add("Visual");
-            }
-            if (detectionInfo.rwr)
-            {
-                detectionTypes.Add("RWR");
-            }
-            if (detectionInfo.mws)
-            {
-                detectionTypes.Add("MWS");
-            }
+                if (detectionInfo.radarLocked)
+                {
+                    detectionString += "RADAR LOCKED\n";
+                }
+                if (detectionInfo.TGPLocked)
+                {
+                    detectionString += "TGP LOCKED\n";
+                }
+                if (detectionInfo.rwrLocked)
+                {
+                    detectionString += $"RADAR LOCK FROM {detectionInfo.detectedActor.actorName}\n";
+                }
+                if (detectionInfo.radar)
+                {
+                    detectionTypes.Add("Radar");
+                }
+                if (detectionInfo.visual)
+                {
+                    detectionTypes.Add("Visual");
+                }
+                if (detectionInfo.rwr)
+                {
+                    detectionTypes.Add("RWR");
+                }
+                if (detectionInfo.mws)
+                {
+                    detectionTypes.Add("MWS");
+                }
 
-            if (detectionTypes.Count > 0) {
-                detectionString += $"{detectionInfo.detectedActor.actorName} detected by {string.Join(", ", detectionTypes)}";
+                if (detectionTypes.Count > 0)
+                {
+                    detectionString += $"{detectionInfo.detectedActor.actorName} detected by {string.Join(", ", detectionTypes)}";
+                }
+
+
+                CheesesAIDebugTools.DrawLabel(detectionInfo.detectedActor.position, detectionString);
             }
-
-
-            CheesesAIDebugTools.DrawLabel(detectionInfo.detectedActor.position, detectionString);
         }
 
         debugLines.UpdateLines();
@@ -194,9 +208,12 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
 
     public override void LateUpdate(Actor actor)
     {
+        if (actor == null)
+            return;
+
         Dictionary<Actor, DetectionInfo> detectedActors = new Dictionary<Actor, DetectionInfo>();
 
-        if (actor.gameObject.GetComponentInChildren<Radar>() != null)
+        if (actor.gameObject.GetComponentInChildren<Radar>() != null && showRadarLines)
         {
             foreach (Radar radar in actor.gameObject.GetComponentsInChildren<Radar>())
             {
@@ -204,12 +221,15 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 {
                     foreach (Actor detected in radar.detectedUnits)
                     {
+                        if (detected == null)
+                            continue;
+
                         debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { radar.radarTransform.position, detected.position }, 1, Color.green));
                     }
                 }
             }
         }
-        if (actor.gameObject.GetComponentInChildren<LockingRadar>() != null)
+        if (actor.gameObject.GetComponentInChildren<LockingRadar>() != null && showRadarLines)
         {
             foreach (LockingRadar lRadar in actor.gameObject.GetComponentsInChildren<LockingRadar>())
             {
@@ -225,6 +245,9 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                         {
                             foreach (Actor detected in lRadar.radar.detectedUnits)
                             {
+                                if (detected == null)
+                                    continue;
+
                                 debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { lRadar.radar.radarTransform.position, detected.position }, 1, Color.green));
                             }
                         }
@@ -239,16 +262,18 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 }
             }
         }
-        VisualTargetFinder vtf = actor.gameObject.GetComponentInChildren<VisualTargetFinder>();
-        if (vtf != null)
+        if (actor.gameObject.GetComponentInChildren<VisualTargetFinder>() != null && showVisualLines)
         {
-            foreach (Actor target in vtf.targetsSeen)
+            foreach (VisualTargetFinder vtf in actor.gameObject.GetComponentsInChildren<VisualTargetFinder>())
             {
-                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { vtf.transform.position, target.position }, 1, Color.blue));
+                foreach (Actor target in vtf.targetsSeen)
+                {
+                    debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { vtf.transform.position, target.position }, 1, Color.blue));
+                }
             }
         }
         MissileDetector md = actor.gameObject.GetComponentInChildren<MissileDetector>();
-        if (md)
+        if (md && showMWSLines)
         {
             foreach (Missile missile in md.detectedMissiles)
             {
@@ -256,7 +281,7 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
             }
         }
         ModuleRWR rwr = actor.gameObject.GetComponentInChildren<ModuleRWR>();
-        if (rwr != null)
+        if (rwr != null && showRWRLines)
         {
             foreach (ModuleRWR.RWRContact contact in rwr.contacts)
             {
@@ -285,5 +310,35 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
         base.Dissable();
 
         debugLines.DestroyAllLineRenderers();
+    }
+
+    protected override void WindowFunction(int windowID)
+    {
+        if (actor == null)
+        {
+            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            return;
+        }
+
+        showDetectionText = GUI.Toggle(new Rect(20, 20, 160, 20), showDetectionText, "Show Detection Text");
+
+        showRadarLines = GUI.Toggle(new Rect(20, 40, 160, 20), showRadarLines, "Show Radar Lines");
+        showRWRLines = GUI.Toggle(new Rect(20, 60, 160, 20), showRWRLines, "Show RWR Lines");
+        showVisualLines = GUI.Toggle(new Rect(20, 80, 160, 20), showVisualLines, "Show Visual Lines");
+        showTGPLines = GUI.Toggle(new Rect(20, 100, 160, 20), showTGPLines, "Show TGP Lines");
+        showMWSLines = GUI.Toggle(new Rect(20, 120, 160, 20), showMWSLines, "Show MWS Lines");
+
+        //string debugText = "";
+        //GetDebugText(ref debugText, null);
+        //GUI.Label(new Rect(20, 140, 160, 200), debugText);
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+
+    public override void Enable()
+    {
+        base.Enable();
+        windowRect = new Rect(20, 20, 200, 140);
     }
 }

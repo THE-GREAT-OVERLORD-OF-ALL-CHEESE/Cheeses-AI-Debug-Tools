@@ -14,9 +14,14 @@ public class CheeseDebugModule_Flight : CheeseDebugModule
 
     public DebugLineManager debugLines;
 
+    public bool showEngineDebug = true;
+
     public override void GetDebugText(ref string debugString, Actor actor)
     {
-        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null)
+        if (actor == null)
+            return;
+
+        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
         {
             foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
             {
@@ -34,9 +39,12 @@ public class CheeseDebugModule_Flight : CheeseDebugModule
 
     public override void LateUpdate(Actor actor)
     {
+        if (actor == null)
+            return;
+
         base.LateUpdate(actor);
 
-        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null)
+        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
         {
             foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
             {
@@ -78,5 +86,33 @@ public class CheeseDebugModule_Flight : CheeseDebugModule
             engineString += $"ENGINE FAILED\n";
         }
         return engineString;
+    }
+
+    protected override void WindowFunction(int windowID)
+    {
+        if (actor == null)
+        {
+            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            return;
+        }
+
+        showEngineDebug = GUI.Toggle(new Rect(20, 20, 160, 20), showEngineDebug, "Show Engine Debug");
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+
+    public override void Enable()
+    {
+        base.Enable();
+
+        windowRect = new Rect(20, 20, 200, 40);
+    }
+
+    public override void Dissable()
+    {
+        base.Dissable();
+
+        debugLines.DestroyAllLineRenderers();
     }
 }

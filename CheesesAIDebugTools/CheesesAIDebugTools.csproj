@@ -77,19 +77,25 @@
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheeseDebugModules\CheeseDebugModule_Misc.cs" />
+    <Compile Include="DebugUtils\FollowPathUtility.cs" />
+    <Compile Include="DebugUtils\AirportDebugUtility.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_AutoPilot.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Detection.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Actor.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_AIPilot.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Game.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Help.cs" />
+    <Compile Include="CheeseDebugModules\CheeseDebugModule_Ship.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_SAM.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Flight.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule.cs" />
     <Compile Include="DebugLineManager.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="DebugUtils\MissileDebugUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\projects\My Mods\Cheeses AI Debug Tools\Builds\CheesesAIDebugTools.dll"</PostBuildEvent>

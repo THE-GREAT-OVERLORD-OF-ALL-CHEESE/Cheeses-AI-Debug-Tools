@@ -70,6 +70,9 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
 
     public override void GetDebugText(ref string debugString, Actor actor)
     {
+        if (actor == null)
+            return;
+
         AIPilot aiPilot = actor.gameObject.GetComponent<AIPilot>();
         if (aiPilot != null)
         {
@@ -161,10 +164,55 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
             }
         }
     }
+    protected override void WindowFunction(int windowID)
+    {
+        if (actor == null)
+        {
+            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            return;
+        }
+
+        AIPilot aiPilot = actor.gameObject.GetComponent<AIPilot>();
+        if (aiPilot != null)
+        {
+            aiPilotTraverse = Traverse.Create(aiPilot);
+            GUI.Label(new Rect(20, 20, 360, 20), $"Auto Engage: {aiPilot.autoEngageEnemies}");
+            GUI.Label(new Rect(20, 40, 360, 20), $"Combat role: {aiPilot.combatRole}");
+            if (aiPilot.voiceProfile != null)
+            {
+                GUI.Label(new Rect(20, 60, 360, 20), $"Wingman voice profile: {aiPilot.voiceProfile.name}");
+            }
+            else
+            {
+                GUI.Label(new Rect(20, 60, 360, 20), $"No voice profile...");
+            }
+
+
+
+            GUI.Label(new Rect(20, 100, 360, 20), $"Command state: {aiPilot.commandState}");
+            GUI.Label(new Rect(20, 120, 360, 20), $"Takeoff command state: {(TakeOffStates)aiPilotTraverse.Field("takeOffState").GetValue()}");
+            GUI.Label(new Rect(20, 140, 360, 20), $"Cat takeoff command state: {(CTOStates)aiPilotTraverse.Field("ctoState").GetValue()}");
+            GUI.Label(new Rect(20, 160, 360, 20), $"Landing command state: {(LandingStates)aiPilotTraverse.Field("landingState").GetValue()}");
+            GUI.Label(new Rect(20, 180, 360, 20), $"Vertical landing command state: {(LandOnPadStates)aiPilotTraverse.Field("landOnPadState").GetValue()}");
+
+            GUI.Label(new Rect(20, 220, 360, 20), $"Rearm after landing: {(bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()}");
+            GUI.Label(new Rect(20, 240, 360, 20), $"Take off after landing: {(bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()}");
+        }
+        else
+        {
+            GUI.Label(new Rect(20, 20, 360, 20), $"No AIPilot...");
+        }
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
 
     public override void LateUpdate(Actor actor)
     {
         base.LateUpdate(actor);
+
+        if (actor == null)
+            return;
 
         AIPilot aiPilot = actor.gameObject.GetComponent<AIPilot>();
         if (aiPilot != null)
@@ -189,9 +237,21 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
                 debugLines.AddCircle(new DebugLineManager.DebugLineInfo(null,
                     1, Color.blue), landOnPadTf.position, 20, 36);
             }
+
+            if (aiPilot.targetRunway != null)
+            {
+                AirportDebugUtility.AirportDebugLine(debugLines, aiPilot.targetRunway.airport);
+            }
         }
 
         debugLines.UpdateLines();
+    }
+
+    public override void Enable()
+    {
+        base.Enable();
+
+        windowRect = new Rect(20, 20, 400, 260);
     }
 
     public override void Dissable()

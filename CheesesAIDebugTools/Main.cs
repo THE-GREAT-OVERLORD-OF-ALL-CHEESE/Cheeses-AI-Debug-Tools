@@ -15,6 +15,7 @@ public class CheesesAIDebugTools : VTOLMOD
     public CameraFollowMe debugCam;
 
     public Traverse debugCamTraverse;
+    public Traverse campaignTraverse;
 
     public AirbaseNavNode lastNode;
     public Runway lastRunway;
@@ -30,8 +31,6 @@ public class CheesesAIDebugTools : VTOLMOD
         //harmony.PatchAll(Assembly.GetExecutingAssembly());
 
         base.ModLoaded();
-        VTOLAPI.SceneLoaded += SceneLoaded;
-        VTOLAPI.MissionReloaded += MissionReloaded;
 
         instance = this;
 
@@ -45,43 +44,23 @@ public class CheesesAIDebugTools : VTOLMOD
         cheeseDebugModules.Add(new CheeseDebugModule_AutoPilot("Auto Pilot Debug", KeyCode.Alpha5));
         cheeseDebugModules.Add(new CheeseDebugModule_Flight("Flight Debug", KeyCode.Alpha6));
         cheeseDebugModules.Add(new CheeseDebugModule_SAM("SAM Debug", KeyCode.Alpha7));
-        cheeseDebugModules.Add(new CheeseDebugModule("Ship Debug", KeyCode.Alpha8));
+        cheeseDebugModules.Add(new CheeseDebugModule_Ship("Ship Debug", KeyCode.Alpha8));
         cheeseDebugModules.Add(new CheeseDebugModule("Missile Debug", KeyCode.Alpha9));
-    }
-
-    void SceneLoaded(VTOLScenes scene)
-    {
-        switch (scene)
-        {
-            case VTOLScenes.Akutan:
-            case VTOLScenes.CustomMapBase:
-                StartCoroutine("SetupScene");
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void MissionReloaded()
-    {
-        StartCoroutine("SetupScene");
-    }
-
-    private IEnumerator SetupScene()
-    {
-        while (VTMapManager.fetch == null || !VTMapManager.fetch.scenarioReady || FlightSceneManager.instance.switchingScene)
-        {
-            yield return null;
-        }
-
-        toggler = GameObject.FindObjectOfType<DebugCamToggler>();
-        debugCam = toggler.debugCam;
-
-        debugCamTraverse = Traverse.Create(debugCam);
     }
 
     private void Update()
     {
+        if (debugCam == null)
+        {
+            toggler = GameObject.FindObjectOfType<DebugCamToggler>();
+
+            if (toggler != null)
+            {
+                debugCam = toggler.debugCam;
+                debugCamTraverse = Traverse.Create(debugCam);
+            }
+        }
+
         foreach (CheeseDebugModule module in cheeseDebugModules)
         {
             if (Input.GetKeyDown(module.keyCode))
@@ -110,7 +89,71 @@ public class CheesesAIDebugTools : VTOLMOD
             return;
 
         string debugString = "Cheeses AI Debug Tools\nPress H to hide...\n\n";
+        int windowID = 1;
 
+        Actor actor = null;
+        if (debugCam != null)
+        {
+            if ((int)debugCamTraverse.Field("idx").GetValue() < debugCam.targets.Count && (int)debugCamTraverse.Field("idx").GetValue() >= 0)
+            {
+                actor = debugCam.targets[(int)debugCamTraverse.Field("idx").GetValue()];
+            }
+        }
+
+        foreach (CheeseDebugModule module in cheeseDebugModules)
+        {
+            if (module.enabled)
+            {
+                debugString += $"{module.moduleName}, push {module.keyCode.ToString()} to disable\n";
+                try
+                {
+                    module.GetDebugText(ref debugString, actor);
+                    module.OnDrawGUI(windowID, actor);
+                }
+                catch (Exception exception)
+                {
+                    debugString += $"\n{exception.Message}\n";
+                    Debug.Log($"Cheeses AI Debug Exception in {module.moduleName}: {exception.Message}");
+                }
+            }
+            else
+            {
+                debugString += $"{module.moduleName} is disabled, push {module.keyCode.ToString()} to enable";
+            }
+
+            debugString += "\n\n";
+            windowID++;
+        }
+
+        //GUI.TextArea(new Rect(100, 100, 400, 800), debugString);
+
+        /*
+        CampaignSelectorUI campaignSelector = GameObject.FindObjectOfType<CampaignSelectorUI>();
+        if (campaignSelector != null)
+        {
+            campaignTraverse = new Traverse(campaignSelector);
+            List<Campaign> campaigns = (List<Campaign>)campaignTraverse.Field("campaigns").GetValue();
+
+            string campaignList = "Campaign List:\n";
+            foreach (Campaign campaign in campaigns)
+            {
+                campaignList += $"   Campaign: {campaign.campaignName}\n";
+                foreach (CampaignScenario scenario in campaign.missions)
+                {
+                    campaignList += $"      Scenario: {scenario.scenarioName}\n";
+                }
+            }
+
+            GUI.TextArea(new Rect(500, 100, 400, 800), campaignList);
+        }
+        */
+        windowRect = GUI.Window(0, windowRect, WindowFunction, "Cheeses AI Debug");
+    }
+
+    private Rect windowRect = new Rect(20, 20, 200, 600);
+
+    private void WindowFunction(int windowID)
+    {
         if (debugCam != null)
         {
             if ((int)debugCamTraverse.Field("idx").GetValue() < debugCam.targets.Count && (int)debugCamTraverse.Field("idx").GetValue() >= 0)
@@ -118,44 +161,45 @@ public class CheesesAIDebugTools : VTOLMOD
                 Actor actor = debugCam.targets[(int)debugCamTraverse.Field("idx").GetValue()];
                 if (actor != null)
                 {
-                    foreach (CheeseDebugModule module in cheeseDebugModules)
-                    {
-                        if (module.enabled)
-                        {
-                            debugString += $"{module.moduleName}, push {module.keyCode.ToString()} to disable\n";
-                            try
-                            {
-                                module.GetDebugText(ref debugString, actor);
-                            }
-                            catch (Exception exception)
-                            {
-                                debugString += $"\n{exception.Message}\n";
-                                Debug.Log($"Cheeses AI Debug Exception in {module.moduleName}: {exception.Message}");
-                            }
-                        }
-                        else
-                        {
-                            debugString += $"{module.moduleName} is disabled, push {module.keyCode.ToString()} to enable";
-                        }
-
-                        debugString += "\n\n";
-                    }
+                    GUI.Label(new Rect(20, 20, 160, 60), "Press H to hide...");
                 }
                 else
                 {
-                    debugString += "There is no actor selected...";
+                    GUI.Label(new Rect(20, 20, 160, 60), "There is no actor selected...");
                 }
             }
             else
             {
-                debugString += "Debug camera is not active, push insert to enable it...";
+                GUI.Label(new Rect(20, 20, 160, 60), "Debug camera is not active, push insert to enable it...");
             }
         }
         else
         {
-            debugString += "There is no debug camera in this scene...";
+            GUI.Label(new Rect(20, 20, 160, 60), "There is no debug camera in this scene...");
         }
-        GUI.TextArea(new Rect(100, 100, 400, 800), debugString);
+
+
+        float startingPos = 80;
+
+        foreach (CheeseDebugModule module in cheeseDebugModules)
+        {
+            if (GUI.Button(new Rect(20, startingPos, 160, 30), module.moduleName))
+            {
+                module.enabled = !module.enabled;
+                if (module.enabled)
+                {
+                    module.Enable();
+                }
+                else
+                {
+                    module.Dissable();
+                }
+            }
+
+            startingPos += 40;
+        }
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
     }
 
     private void LateUpdate()

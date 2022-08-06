@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class CheeseDebugModule_Actor : CheeseDebugModule
+public class CheeseDebugModule_Misc : CheeseDebugModule
 {
-    public CheeseDebugModule_Actor(string name, KeyCode keyCode) : base(name, keyCode)
+    public CheeseDebugModule_Misc(string name, KeyCode keyCode) : base(name, keyCode)
     {
 
     }

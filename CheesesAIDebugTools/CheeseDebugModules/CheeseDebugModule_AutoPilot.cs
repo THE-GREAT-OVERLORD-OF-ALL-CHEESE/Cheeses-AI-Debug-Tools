@@ -18,6 +18,9 @@ public class CheeseDebugModule_AutoPilot : CheeseDebugModule
 
     public override void GetDebugText(ref string debugString, Actor actor)
     {
+        if (actor == null)
+            return;
+
         AutoPilot autoPilot = actor.gameObject.GetComponent<AutoPilot>();
         if (autoPilot != null)
         {
@@ -83,6 +86,45 @@ public class CheeseDebugModule_AutoPilot : CheeseDebugModule
         }
 
         debugLines.UpdateLines();
+    }
+
+    protected override void WindowFunction(int windowID)
+    {
+        if (actor == null)
+        {
+            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            return;
+        }
+
+        AutoPilot autoPilot = actor.gameObject.GetComponent<AutoPilot>();
+        if (autoPilot != null)
+        {
+            autoPilotTraverse = Traverse.Create(autoPilot);
+
+            GUI.Label(new Rect(20, 20, 260, 20), $"Steer mode: {autoPilot.steerMode}");
+
+
+            GUI.Label(new Rect(20, 40, 260, 20), $"Input limiter: {autoPilot.inputLimiter}");
+            GUI.Label(new Rect(20, 60, 260, 20), $"Throttle limiter: {autoPilot.throttleLimiter}");
+
+
+            GUI.Label(new Rect(20, 100, 260, 20), $"Current speed: {autoPilot.currentSpeed}");
+            GUI.Label(new Rect(20, 120, 260, 20), $"Target speed: {autoPilot.targetSpeed}");
+        }
+        else
+        {
+            GUI.Label(new Rect(20, 20, 260, 20), $"No AutoPilot...");
+        }
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+
+    public override void Enable()
+    {
+        base.Enable();
+
+        windowRect = new Rect(20, 20, 300, 140);
     }
 
     public override void Dissable()
