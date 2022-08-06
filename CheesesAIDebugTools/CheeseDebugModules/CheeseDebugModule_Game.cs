@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VTOLVR.Multiplayer;
 
 public class CheeseDebugModule_Game : CheeseDebugModule
 {
@@ -38,12 +39,21 @@ public class CheeseDebugModule_Game : CheeseDebugModule
         GUI.Label(new Rect(20, 80, 160, 20), $"Frame length: {Mathf.Round(Time.deltaTime * 1000)}ms");
         GUI.Label(new Rect(20, 100, 160, 20), $"FPS: {Mathf.Round(1 / Time.deltaTime)}");
 
+        if (GUI.Button(new Rect(20, 120, 80, 80), "Reload Mission") && !VTOLMPUtils.IsMultiplayer())
+        {
+            FlightSceneManager.instance.ReloadScene();
+        }
+        if (GUI.Button(new Rect(100, 120, 80, 80), "End Mission"))
+        {
+            FlightSceneManager.instance.ReturnToBriefingOrExitScene();
+        }
+
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
     }
 
     public override void Enable()
     {
         base.Enable();
-        windowRect = new Rect(20, 20, 200, 140);
+        windowRect = new Rect(20, 20, 200, 220);
     }
 }

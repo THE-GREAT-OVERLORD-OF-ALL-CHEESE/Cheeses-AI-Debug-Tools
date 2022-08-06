@@ -141,10 +141,10 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
             debugString += "\n";
             debugString += "Misc Stuff\n";
             debugString += "Spawn flags\n";
-            foreach (string flag in aiPilot.aiSpawn.unitSpawner.spawnFlags)
-            {
-                debugString += flag + "\n";
-            }
+            //foreach (string flag in aiPilot.aiSpawn.unitSpawner.spawnFlags)
+            //{
+            //    debugString += flag + "\n";
+            //}
         }
         else
         {

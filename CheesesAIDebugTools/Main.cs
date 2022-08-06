@@ -46,6 +46,7 @@ public class CheesesAIDebugTools : VTOLMOD
         cheeseDebugModules.Add(new CheeseDebugModule_SAM("SAM Debug", KeyCode.Alpha7));
         cheeseDebugModules.Add(new CheeseDebugModule_Ship("Ship Debug", KeyCode.Alpha8));
         cheeseDebugModules.Add(new CheeseDebugModule("Missile Debug", KeyCode.Alpha9));
+        cheeseDebugModules.Add(new CheeseDebugModule_Misc("Misc Debug", KeyCode.Alpha0));
     }
 
     private void Update()

@@ -47,6 +47,8 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 debugString += $"Radar ({radar.gameObject.name}):\n";
                 if (radar.radarEnabled)
                 {
+                    CheesesAIDebugTools.DrawLabel(radar.radarTransform.position, $"Radar on, detected {radar.detectedUnits.Count} units.");
+
                     foreach (Actor detected in radar.detectedUnits)
                     {
                         debugString += detected.actorName + "\n";
@@ -57,6 +59,8 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 }
                 else
                 {
+                    CheesesAIDebugTools.DrawLabel(radar.radarTransform.position, "Radar off...");
+
                     debugString += "Radar dissabled...\n";
                 }
             }
@@ -139,6 +143,14 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
         {
             debugString += "No RWR.\n";
         }
+        foreach (OpticalTargeter tgp in actor.gameObject.GetComponentsInChildren<OpticalTargeter>())
+        {
+            if (tgp.lockedActor != null)
+            {
+                GetOrAddDetectionInfo(detectedActors, tgp.lockedActor).TGPLocked = true;
+            }
+        }
+
 
         if (showDetectionText)
         {
@@ -219,6 +231,8 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
             {
                 if (radar.radarEnabled && radar.gameObject.GetComponent<LockingRadar>() == false)
                 {
+                    debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { radar.radarTransform.position, radar.radarTransform.position + radar.radarTransform.forward * 10 }, 1, Color.green));
+
                     foreach (Actor detected in radar.detectedUnits)
                     {
                         if (detected == null)
@@ -243,6 +257,8 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                     {
                         if (lRadar.radar.radarEnabled)
                         {
+                            debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { lRadar.radar.radarTransform.position, lRadar.radar.radarTransform.position + lRadar.radar.radarTransform.forward * 10 }, 1, Color.green));
+
                             foreach (Actor detected in lRadar.radar.detectedUnits)
                             {
                                 if (detected == null)
@@ -301,6 +317,18 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 }
             }
         }
+        foreach (OpticalTargeter tgp in actor.gameObject.GetComponentsInChildren<OpticalTargeter>())
+        {
+            if (tgp.locked)
+            {
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { tgp.cameraTransform.position, tgp.laserPoint.point }, 1, Color.cyan));
+            }
+            else
+            {
+                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { tgp.cameraTransform.position, tgp.cameraTransform.position + tgp.cameraTransform.forward * 10 }, 1, Color.cyan));
+            }
+        }
+
 
         debugLines.UpdateLines();
     }

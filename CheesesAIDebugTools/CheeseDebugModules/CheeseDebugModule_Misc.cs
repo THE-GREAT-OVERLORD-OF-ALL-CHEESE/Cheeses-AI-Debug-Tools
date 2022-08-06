@@ -12,34 +12,16 @@ public class CheeseDebugModule_Misc : CheeseDebugModule
 
     }
 
-    public bool showHealth = true;
+    public bool chaff = true;
+    public bool flares = true;
+
+    public float count = 4;
+    public float interval = 0.5f;
 
     public override void GetDebugText(ref string debugString, Actor actor)
     {
         if (actor == null)
             return;
-
-        debugString += $"GameObject Name: {actor.gameObject.name}\n";
-        debugString += $"Actor Name: {actor.actorName}\n";
-        debugString += $"Team: {actor.team.ToString()}\n";
-
-        if (actor.gameObject.GetComponentInChildren<Health>() != null && showHealth)
-        {
-            foreach (Health health in actor.gameObject.GetComponentsInChildren<Health>())
-            {
-                debugString += $"Health: {health.gameObject.name}\n";
-                debugString += $"{health.currentHealth} / {health.maxHealth}\n";
-                if (health.invincible) {
-                    debugString += "Invincible\n";
-                }
-
-                CheesesAIDebugTools.DrawLabel(health.gameObject.transform.position, $"{health.gameObject.name}: {health.currentHealth} / {health.maxHealth}");
-            }
-        }
-        else
-        {
-            debugString += "No Heath...";
-        }
     }
 
     protected override void WindowFunction(int windowID)
@@ -51,34 +33,53 @@ public class CheeseDebugModule_Misc : CheeseDebugModule
             return;
         }
 
-        GUI.Label(new Rect(20, 20, 160, 20), $"GameObject Name: {actor.gameObject.name}");
-        GUI.Label(new Rect(20, 40, 160, 20), $"Actor Name: {actor.actorName}");
-        GUI.Label(new Rect(20, 60, 160, 20), $"Team: {actor.team}");
+        GUI.Label(new Rect(20, 20, 160, 20), $"Aircraft Misc");
 
-        showHealth = GUI.Toggle(new Rect(20, 80, 160, 20), showHealth, "Show Health Text");
-
-        AIUnitSpawn unitSpawn = actor.gameObject.GetComponent<AIUnitSpawn>();
-        if (unitSpawn != null) {
-            if (GUI.Button(new Rect(20, 120, 160, 20), $"Engage"))
+        AIAircraftSpawn aircraftSpawn = actor.gameObject.GetComponent<AIAircraftSpawn>();
+        if (aircraftSpawn != null) {
+            if (GUI.Button(new Rect(20, 40, 160, 20), $"Wing Fold Retract") && aircraftSpawn.aiPilot.wingRotator != null)
             {
-                unitSpawn.SetEngageEnemies(true);
+                aircraftSpawn.aiPilot.wingRotator.SetDeployed();
             }
-            if (GUI.Button(new Rect(20, 140, 160, 20), $"Disengage"))
+            if (GUI.Button(new Rect(20, 60, 160, 20), $"Wing Fold Spread") && aircraftSpawn.aiPilot.wingRotator != null)
             {
-                unitSpawn.SetEngageEnemies(false);
+                aircraftSpawn.aiPilot.wingRotator.SetDefault();
             }
-            GUI.Label(new Rect(20, 160, 160, 20), $"Engaging Enemies: {unitSpawn.engageEnemies}");
 
 
-            if (GUI.Button(new Rect(20, 200, 160, 20), unitSpawn.invincible ? "Set vincible" : "Set invincible"))
+            GUI.Label(new Rect(20, 100, 160, 20), $"CMS");
+
+            chaff = GUI.Toggle(new Rect(20, 120, 160, 20), chaff, $"Chaff");
+            flares = GUI.Toggle(new Rect(20, 140, 160, 20), flares, $"Flares");
+
+            GUI.Label(new Rect(20, 160, 80, 20), $"Count: ");
+            count = float.Parse(GUI.TextField(new Rect(100, 160, 80, 20), count.ToString()));
+            GUI.Label(new Rect(20, 180, 80, 20), $"Interval: ");
+            interval = float.Parse(GUI.TextField(new Rect(100, 180, 80, 20), count.ToString()));
+
+            if (GUI.Button(new Rect(20, 200, 160, 20), "Fire CMS Sequence"))
             {
-                unitSpawn.SetInvincible(!unitSpawn.invincible);
+                aircraftSpawn.CountermeasureProgram(flares, chaff, count, interval);
             }
-            GUI.Label(new Rect(20, 220, 160, 20), $"Invincible: {unitSpawn.invincible}");
         }
         else
         {
-            GUI.Label(new Rect(20, 100, 160, 20), $"No AIUnitSpawn...");
+            GUI.Label(new Rect(20, 40, 160, 20), $"No Aicraft...");
+        }
+
+        GUI.Label(new Rect(20, 240, 160, 20), $"Ship Misc");
+
+        AIDroneCarrierSpawn droneCarrierSpawn = actor.gameObject.GetComponent<AIDroneCarrierSpawn>();
+        if (droneCarrierSpawn != null)
+        {
+            if (GUI.Button(new Rect(20, 260, 160, 20), $"Launch Drones!"))
+            {
+                droneCarrierSpawn.LaunchDrones();
+            }
+        }
+        else
+        {
+            GUI.Label(new Rect(20, 260, 160, 20), $"No Drone Carrier...");
         }
 
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
@@ -87,6 +88,6 @@ public class CheeseDebugModule_Misc : CheeseDebugModule
     public override void Enable()
     {
         base.Enable();
-        windowRect = new Rect(20, 20, 260, 200);
+        windowRect = new Rect(20, 20, 200, 300);
     }
 }
