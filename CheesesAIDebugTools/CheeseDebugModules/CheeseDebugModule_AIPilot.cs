@@ -150,20 +150,8 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
         {
             debugString += "This is not an AI aircraft...";
         }
-
-        AIAircraftSpawn aircraftSpawn = actor.gameObject.GetComponent<AIAircraftSpawn>();
-        if (aircraftSpawn != null)
-        {
-            if (GUI.Button(new Rect(500, 100, 100, 20), "Take Off"))
-            {
-                aircraftSpawn.TakeOff();
-            }
-            if (GUI.Button(new Rect(500, 120, 100, 20), "Land"))
-            {
-                aircraftSpawn.RearmAt(new AirportReference("map:0"));//airbase map:0 may not exist, change this to pick the closest airbase, if one exists
-            }
-        }
     }
+
     protected override void WindowFunction(int windowID)
     {
         if (actor == null)
@@ -191,13 +179,14 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
 
 
             GUI.Label(new Rect(20, 100, 360, 20), $"Command state: {aiPilot.commandState}");
-            GUI.Label(new Rect(20, 120, 360, 20), $"Takeoff command state: {(TakeOffStates)aiPilotTraverse.Field("takeOffState").GetValue()}");
-            GUI.Label(new Rect(20, 140, 360, 20), $"Cat takeoff command state: {(CTOStates)aiPilotTraverse.Field("ctoState").GetValue()}");
-            GUI.Label(new Rect(20, 160, 360, 20), $"Landing command state: {(LandingStates)aiPilotTraverse.Field("landingState").GetValue()}");
-            GUI.Label(new Rect(20, 180, 360, 20), $"Vertical landing command state: {(LandOnPadStates)aiPilotTraverse.Field("landOnPadState").GetValue()}");
+            GUI.Label(new Rect(20, 120, 360, 20), $"Queued command state: {(AIPilot.CommandStates)aiPilotTraverse.Field("queuedCommand").GetValue()}");
+            GUI.Label(new Rect(20, 140, 360, 20), $"Takeoff command state: {(TakeOffStates)aiPilotTraverse.Field("takeOffState").GetValue()}");
+            GUI.Label(new Rect(20, 160, 360, 20), $"Cat takeoff command state: {(CTOStates)aiPilotTraverse.Field("ctoState").GetValue()}");
+            GUI.Label(new Rect(20, 180, 360, 20), $"Landing command state: {(LandingStates)aiPilotTraverse.Field("landingState").GetValue()}");
+            GUI.Label(new Rect(20, 200, 360, 20), $"Vertical landing command state: {(LandOnPadStates)aiPilotTraverse.Field("landOnPadState").GetValue()}");
 
-            GUI.Label(new Rect(20, 220, 360, 20), $"Rearm after landing: {(bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()}");
-            GUI.Label(new Rect(20, 240, 360, 20), $"Take off after landing: {(bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()}");
+            GUI.Label(new Rect(20, 240, 360, 20), $"Rearm after landing: {(bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()}");
+            GUI.Label(new Rect(20, 260, 360, 20), $"Take off after landing: {(bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()}");
         }
         else
         {
@@ -251,7 +240,7 @@ public class CheeseDebugModule_AIPilot : CheeseDebugModule
     {
         base.Enable();
 
-        windowRect = new Rect(20, 20, 400, 260);
+        windowRect = new Rect(20, 20, 400, 300);
     }
 
     public override void Dissable()

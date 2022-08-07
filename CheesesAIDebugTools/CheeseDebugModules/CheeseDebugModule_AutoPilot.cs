@@ -62,7 +62,7 @@ public class CheeseDebugModule_AutoPilot : CheeseDebugModule
         base.LateUpdate(actor);
 
         AutoPilot autoPilot = actor.gameObject.GetComponent<AutoPilot>();
-        if (autoPilot != null)
+        if (autoPilot != null && autoPilot.referenceTransform != null)
         {
             autoPilotTraverse = Traverse.Create(autoPilot);
 

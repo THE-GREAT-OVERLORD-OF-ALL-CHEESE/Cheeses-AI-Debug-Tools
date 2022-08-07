@@ -75,10 +75,15 @@ public class CheeseDebugModule_Actor : CheeseDebugModule
                 unitSpawn.SetInvincible(!unitSpawn.invincible);
             }
             GUI.Label(new Rect(20, 220, 160, 20), $"Invincible: {unitSpawn.invincible}");
+
+            if (GUI.Button(new Rect(20, 240, 160, 20), "Destroy"))
+            {
+                unitSpawn.DestroySelf();
+            }
         }
         else
         {
-            GUI.Label(new Rect(20, 100, 160, 20), $"No AIUnitSpawn...");
+            GUI.Label(new Rect(20, 120, 160, 20), $"No AIUnitSpawn...");
         }
 
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
@@ -87,6 +92,6 @@ public class CheeseDebugModule_Actor : CheeseDebugModule
     public override void Enable()
     {
         base.Enable();
-        windowRect = new Rect(20, 20, 260, 200);
+        windowRect = new Rect(20, 20, 200, 280);
     }
 }

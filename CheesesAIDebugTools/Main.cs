@@ -40,13 +40,14 @@ public class CheesesAIDebugTools : VTOLMOD
         cheeseDebugModules.Add(new CheeseDebugModule_Game("Game Debug", KeyCode.Alpha1));
         cheeseDebugModules.Add(new CheeseDebugModule_Actor("Actor Debug", KeyCode.Alpha2));
         cheeseDebugModules.Add(new CheeseDebugModule_Detection("Detection Debug", KeyCode.Alpha3));
-        cheeseDebugModules.Add(new CheeseDebugModule_AIPilot("AI Pilot Debug", KeyCode.Alpha4));
-        cheeseDebugModules.Add(new CheeseDebugModule_AutoPilot("Auto Pilot Debug", KeyCode.Alpha5));
-        cheeseDebugModules.Add(new CheeseDebugModule_Flight("Flight Debug", KeyCode.Alpha6));
-        cheeseDebugModules.Add(new CheeseDebugModule_SAM("SAM Debug", KeyCode.Alpha7));
-        cheeseDebugModules.Add(new CheeseDebugModule_Ship("Ship Debug", KeyCode.Alpha8));
-        cheeseDebugModules.Add(new CheeseDebugModule("Missile Debug", KeyCode.Alpha9));
-        cheeseDebugModules.Add(new CheeseDebugModule_Misc("Misc Debug", KeyCode.Alpha0));
+        cheeseDebugModules.Add(new CheeseDebugModule_AICommand("AI Commander", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_AIPilot("AI Pilot Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_AutoPilot("Auto Pilot Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_Flight("Flight Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_SAM("SAM Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_Ship("Ship Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule("Missile Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_Misc("Misc Debug", KeyCode.None));
     }
 
     private void Update()
