@@ -14,31 +14,17 @@ public class CheeseDebugModule_Actor : CheeseDebugModule
 
     public bool showHealth = true;
 
-    public override void GetDebugText(ref string debugString, Actor actor)
+    public override void OnGUI(Actor actor)
     {
         if (actor == null)
             return;
-
-        debugString += $"GameObject Name: {actor.gameObject.name}\n";
-        debugString += $"Actor Name: {actor.actorName}\n";
-        debugString += $"Team: {actor.team.ToString()}\n";
 
         if (actor.gameObject.GetComponentInChildren<Health>() != null && showHealth)
         {
             foreach (Health health in actor.gameObject.GetComponentsInChildren<Health>())
             {
-                debugString += $"Health: {health.gameObject.name}\n";
-                debugString += $"{health.currentHealth} / {health.maxHealth}\n";
-                if (health.invincible) {
-                    debugString += "Invincible\n";
-                }
-
                 CheesesAIDebugTools.DrawLabel(health.gameObject.transform.position, $"{health.gameObject.name}: {health.currentHealth} / {health.maxHealth}");
             }
-        }
-        else
-        {
-            debugString += "No Heath...";
         }
     }
 

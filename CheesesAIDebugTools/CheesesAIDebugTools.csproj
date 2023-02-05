@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheeseDebugModules\CheeseDebugModule_AICommand.cs" />
+    <Compile Include="CheeseDebugModules\CheeseDebugModule_Missile.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Misc.cs" />
     <Compile Include="DebugUtils\FollowPathUtility.cs" />
     <Compile Include="DebugUtils\AirportDebugUtility.cs" />
@@ -94,11 +95,12 @@
     <Compile Include="DebugLineManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="DebugUtils\MissileDebugUtility.cs" />
+    <Compile Include="Patches\Patch_LoadingSceneHelmet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\projects\My Mods\Cheeses AI Debug Tools\Builds\CheesesAIDebugTools.dll"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "D:\SteamLibrary\steamapps\common\VTOL VR\VTOLVR_ModLoader\projects\My Mods\Cheeses AI Debug Tools\Builds\CheesesAIDebugTools.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

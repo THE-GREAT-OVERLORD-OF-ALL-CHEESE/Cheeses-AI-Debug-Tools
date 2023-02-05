@@ -21,12 +21,12 @@ public class CheeseDebugModule
 
     public Rect windowRect = new Rect(20, 20, 200, 200);
 
-    public virtual void GetDebugText(ref string debugString, Actor actor)
+    public virtual void OnGUI(Actor actor)
     {
-        debugString += "This debug module is not implemented yet...";
+
     }
 
-    public virtual void OnDrawGUI(int windowID, Actor actor)
+    public virtual void OnDrawGUIWindow(int windowID, Actor actor)
     {
         this.actor = actor;
         windowRect = GUI.Window(windowID, windowRect, WindowFunction, moduleName);

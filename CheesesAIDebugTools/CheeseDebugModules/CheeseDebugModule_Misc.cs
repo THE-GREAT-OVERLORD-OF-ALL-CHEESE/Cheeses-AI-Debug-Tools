@@ -18,12 +18,6 @@ public class CheeseDebugModule_Misc : CheeseDebugModule
     public float count = 4;
     public float interval = 0.5f;
 
-    public override void GetDebugText(ref string debugString, Actor actor)
-    {
-        if (actor == null)
-            return;
-    }
-
     protected override void WindowFunction(int windowID)
     {
         if (actor == null)

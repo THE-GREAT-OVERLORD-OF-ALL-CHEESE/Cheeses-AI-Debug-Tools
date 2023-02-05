@@ -27,8 +27,8 @@ public class CheesesAIDebugTools : VTOLMOD
 
     public override void ModLoaded()
     {
-        //HarmonyInstance harmony = HarmonyInstance.Create("cheese.cheeseAITools");
-        //harmony.PatchAll(Assembly.GetExecutingAssembly());
+        HarmonyInstance harmony = HarmonyInstance.Create("cheese.cheeseAIDebug");
+        harmony.PatchAll(Assembly.GetExecutingAssembly());
 
         base.ModLoaded();
 
@@ -46,7 +46,7 @@ public class CheesesAIDebugTools : VTOLMOD
         cheeseDebugModules.Add(new CheeseDebugModule_Flight("Flight Debug", KeyCode.None));
         cheeseDebugModules.Add(new CheeseDebugModule_SAM("SAM Debug", KeyCode.None));
         cheeseDebugModules.Add(new CheeseDebugModule_Ship("Ship Debug", KeyCode.None));
-        cheeseDebugModules.Add(new CheeseDebugModule("Missile Debug", KeyCode.None));
+        cheeseDebugModules.Add(new CheeseDebugModule_Missile("Missile Debug", KeyCode.None));
         cheeseDebugModules.Add(new CheeseDebugModule_Misc("Misc Debug", KeyCode.None));
     }
 
@@ -83,6 +83,33 @@ public class CheesesAIDebugTools : VTOLMOD
         {
             hidden = ! hidden;
         }
+
+        if (debugCam != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse2))
+            {
+                Ray ray = debugCam.cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                {
+                    Actor actor = hit.collider.gameObject.GetComponentInParent<Actor>();
+                    if (actor != null)
+                    {
+                        if (debugCam.targets.Contains(actor) == false)
+                        {
+                            debugCam.targets.Add(actor);
+                        }
+
+                        int idx = debugCam.targets.IndexOf(actor);
+
+                        if (idx != -1)
+                        {
+                            debugCamTraverse.Field("idx").SetValue(idx);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void OnGUI()
@@ -90,7 +117,6 @@ public class CheesesAIDebugTools : VTOLMOD
         if (hidden)
             return;
 
-        string debugString = "Cheeses AI Debug Tools\nPress H to hide...\n\n";
         int windowID = 1;
 
         Actor actor = null;
@@ -106,24 +132,17 @@ public class CheesesAIDebugTools : VTOLMOD
         {
             if (module.enabled)
             {
-                debugString += $"{module.moduleName}, push {module.keyCode.ToString()} to disable\n";
                 try
                 {
-                    module.GetDebugText(ref debugString, actor);
-                    module.OnDrawGUI(windowID, actor);
+                    module.OnGUI(actor);
+                    module.OnDrawGUIWindow(windowID, actor);
                 }
                 catch (Exception exception)
                 {
-                    debugString += $"\n{exception.Message}\n";
-                    Debug.Log($"Cheeses AI Debug Exception in {module.moduleName}: {exception.Message}");
+                    Debug.Log($"Cheeses AI Debug Exception in {module.moduleName}: {exception.Message}\n{exception.StackTrace}");
                 }
             }
-            else
-            {
-                debugString += $"{module.moduleName} is disabled, push {module.keyCode.ToString()} to enable";
-            }
 
-            debugString += "\n\n";
             windowID++;
         }
 

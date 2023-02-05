@@ -8,16 +8,11 @@ using VTOLVR.Multiplayer;
 
 public class CheeseDebugModule_Game : CheeseDebugModule
 {
+    public static bool skipHelmetRoom = true;
+
     public CheeseDebugModule_Game(string name, KeyCode keyCode) : base(name, keyCode)
     {
 
-    }
-
-    public override void GetDebugText(ref string debugString, Actor actor)
-    {
-        debugString += $"Game Speed: {Time.timeScale}\n";
-        debugString += $"Frame length: {Mathf.Round(Time.deltaTime * 1000)}ms\n";
-        debugString += $"FPS: {Mathf.Round(1 / Time.deltaTime)}";
     }
 
     protected override void WindowFunction(int windowID)
@@ -48,12 +43,14 @@ public class CheeseDebugModule_Game : CheeseDebugModule
             FlightSceneManager.instance.ReturnToBriefingOrExitScene();
         }
 
+        skipHelmetRoom = GUI.Toggle(new Rect(20, 200, 160, 20), skipHelmetRoom, "Skip Helmet Room");
+
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
     }
 
     public override void Enable()
     {
         base.Enable();
-        windowRect = new Rect(20, 20, 200, 220);
+        windowRect = new Rect(20, 20, 220, 220);
     }
 }

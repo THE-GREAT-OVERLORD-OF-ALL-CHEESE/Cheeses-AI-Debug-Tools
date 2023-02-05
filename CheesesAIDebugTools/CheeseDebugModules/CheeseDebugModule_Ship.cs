@@ -36,7 +36,7 @@ public class CheeseDebugModule_Ship : CheeseDebugModule
         debugLines.UpdateLines();
     }
 
-    public override void GetDebugText(ref string debugString, Actor actor)
+    public override void OnGUI(Actor actor)
     {
         if (actor == null)
             return;

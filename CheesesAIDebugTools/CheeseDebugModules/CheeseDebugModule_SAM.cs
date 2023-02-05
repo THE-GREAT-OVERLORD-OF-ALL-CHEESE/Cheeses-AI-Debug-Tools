@@ -12,7 +12,7 @@ public class CheeseDebugModule_SAM : CheeseDebugModule
 
     }
 
-    public override void GetDebugText(ref string debugString, Actor actor)
+    public override void OnGUI(Actor actor)
     {
         if (actor == null)
             return;
@@ -21,35 +21,26 @@ public class CheeseDebugModule_SAM : CheeseDebugModule
         {
             foreach (SAMLauncher sam in actor.gameObject.GetComponentsInChildren<SAMLauncher>())
             {
-                debugString += $"SAM ({sam.gameObject.name}):\n";
                 if (sam.engageEnemies)
                 {
                     if (sam.engagingTarget)
                     {
-                        debugString += $"ENGAGING {sam.engagedTarget.name}\n";
                         CheesesAIDebugTools.DrawLabel(sam.actor.position, $"ENGAGING {sam.engagedTarget.name}");
                     }
                     else
                     {
-                        debugString += $"No target.\n";
                         CheesesAIDebugTools.DrawLabel(sam.actor.position, $"No target.");
                     }
                 }
                 else
                 {
-                    debugString += $"Not engaging.\n";
                     CheesesAIDebugTools.DrawLabel(sam.actor.position, $"Not engaging.");
                 }
             }
         }
-        else
-        {
-            debugString += "No SAMs.\n";
-        }
 
         foreach (IRSamLauncher irSAM in actor.gameObject.GetComponentsInChildren<IRSamLauncher>())
         {
-            debugString += $"IRSAM ({irSAM.gameObject.name}):\n";
             if (irSAM.engageEnemies)
             {
                 if (irSAM.isEngaging)
@@ -58,13 +49,11 @@ public class CheeseDebugModule_SAM : CheeseDebugModule
                 }
                 else
                 {
-                    debugString += $"No target.\n";
                     CheesesAIDebugTools.DrawLabel(irSAM.headLookTf.position, $"No target.");
                 }
             }
             else
             {
-                debugString += $"Not engaging.\n";
                 CheesesAIDebugTools.DrawLabel(irSAM.headLookTf.position, $"Not engaging.");
             }
         }

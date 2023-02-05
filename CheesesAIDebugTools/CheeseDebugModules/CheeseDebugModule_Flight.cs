@@ -16,7 +16,7 @@ public class CheeseDebugModule_Flight : CheeseDebugModule
 
     public bool showEngineDebug = true;
 
-    public override void GetDebugText(ref string debugString, Actor actor)
+    public override void OnGUI(Actor actor)
     {
         if (actor == null)
             return;
@@ -27,13 +27,8 @@ public class CheeseDebugModule_Flight : CheeseDebugModule
             {
                 string engineString = GetEngineText(engine);
 
-                debugString += engineString;
                 CheesesAIDebugTools.DrawLabel(engine.thrustTransform.position, engineString);
             }
-        }
-        else
-        {
-            debugString += "No Engines...";
         }
     }
 

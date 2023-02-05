@@ -33,7 +33,7 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
     public bool showTGPLines = true;
     public bool showMWSLines = true;
 
-    public override void GetDebugText(ref string debugString, Actor actor)
+    public override void OnGUI(Actor actor)
     {
         if (actor == null)
             return;
@@ -44,14 +44,12 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
         {
             foreach (Radar radar in actor.gameObject.GetComponentsInChildren<Radar>())
             {
-                debugString += $"Radar ({radar.gameObject.name}):\n";
                 if (radar.radarEnabled)
                 {
                     CheesesAIDebugTools.DrawLabel(radar.radarTransform.position, $"Radar on, detected {radar.detectedUnits.Count} units.");
 
                     foreach (Actor detected in radar.detectedUnits)
                     {
-                        debugString += detected.actorName + "\n";
                         GetOrAddDetectionInfo(detectedActors, detected).radar = true;
 
                         debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { radar.radarTransform.position, detected.position }, 1, Color.green));
@@ -60,76 +58,46 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 else
                 {
                     CheesesAIDebugTools.DrawLabel(radar.radarTransform.position, "Radar off...");
-
-                    debugString += "Radar dissabled...\n";
                 }
             }
-        }
-        else
-        {
-            debugString += "No Radar.\n";
         }
         if (actor.gameObject.GetComponentInChildren<LockingRadar>() != null)
         {
             foreach (LockingRadar lRadar in actor.gameObject.GetComponentsInChildren<LockingRadar>())
             {
-                debugString += $"Locking Radar ({lRadar.gameObject.name}):\n";
                 if (lRadar.IsLocked())
                 {
-                    debugString += $"LOCKED {lRadar.currentLock.actor.name}\n";
                     GetOrAddDetectionInfo(detectedActors, lRadar.currentLock.actor).radarLocked = true;
                 }
-                else
-                {
-                    debugString += $"NO LOCK\n";
-                }
             }
-        }
-        else
-        {
-            debugString += "No Locking Radar.\n";
         }
         if (actor.gameObject.GetComponentInChildren<VisualTargetFinder>() != null)
         {
             foreach (VisualTargetFinder vtf in actor.gameObject.GetComponentsInChildren<VisualTargetFinder>())
             {
-                debugString += "Visual:\n";
                 foreach (Actor target in vtf.targetsSeen)
                 {
-                    debugString += target.actorName + "\n";
                     GetOrAddDetectionInfo(detectedActors, target).visual = true;
                 }
             }
         }
-        else
-        {
-            debugString += "No visual.\n";
-        }
         MissileDetector md = actor.gameObject.GetComponentInChildren<MissileDetector>();
         if (md)
         {
-            debugString += "Missile Warning:\n";
             foreach (Missile missile in md.detectedMissiles)
             {
-                debugString += missile.gameObject.name + "\n";
                 GetOrAddDetectionInfo(detectedActors, missile.actor).mws = true;
             }
-        }
-        else
-        {
-            debugString += "No missile warning.\n";
         }
         ModuleRWR rwr = actor.gameObject.GetComponentInChildren<ModuleRWR>();
         if (rwr != null)
         {
-            debugString += "RWR:\n";
             foreach (ModuleRWR.RWRContact contact in rwr.contacts)
             {
                 if (contact != null)
                 {
                     if (contact.radarActor != null && contact.radarActor.alive && contact.active)
                     {
-                        debugString += contact.radarActor.actorName + "\n";
                         GetOrAddDetectionInfo(detectedActors, contact.radarActor).rwr = true;
                         if (contact.locked)
                         {
@@ -138,10 +106,6 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                     }
                 }
             }
-        }
-        else
-        {
-            debugString += "No RWR.\n";
         }
         foreach (OpticalTargeter tgp in actor.gameObject.GetComponentsInChildren<OpticalTargeter>())
         {
@@ -328,7 +292,6 @@ public class CheeseDebugModule_Detection : CheeseDebugModule
                 debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { tgp.cameraTransform.position, tgp.cameraTransform.position + tgp.cameraTransform.forward * 10 }, 1, Color.cyan));
             }
         }
-
 
         debugLines.UpdateLines();
     }

@@ -28,16 +28,15 @@ Camera Modifier - Left Shift
 While holding down left shift, scrolling changes the FOV, and right click and dragging rotates the camera
 
 Delete - End mission
-End - Reload mission";
+End - Reload mission
+
+Insert Camera Controls+ (these are from the AI Debug mod):
+
+Middle click - Select unit";
 
     public CheeseDebugModule_Help(string name, KeyCode keyCode) : base(name, keyCode)
     {
 
-    }
-
-    public override void GetDebugText(ref string debugString, Actor actor)
-    {
-        debugString += helpString;
     }
 
     protected override void WindowFunction(int windowID)
