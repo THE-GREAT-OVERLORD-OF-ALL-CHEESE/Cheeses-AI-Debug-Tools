@@ -1,76 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheeseMods.CheeseDebugTools.CheeseDebugModules;
 using UnityEngine;
 
-public class CheeseDebugModule_SAM : CheeseDebugModule
+namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
 {
-    public CheeseDebugModule_SAM(string name, KeyCode keyCode) : base(name, keyCode)
+    public class CheeseDebugModule_SAM : CheeseDebugModule
     {
-
-    }
-
-    public override void OnGUI(Actor actor)
-    {
-        if (actor == null)
-            return;
-
-        if (actor.gameObject.GetComponentInChildren<SAMLauncher>() != null)
+        public CheeseDebugModule_SAM(string name, KeyCode keyCode) : base(name, keyCode)
         {
-            foreach (SAMLauncher sam in actor.gameObject.GetComponentsInChildren<SAMLauncher>())
+
+        }
+
+        public override void OnGUI(Actor actor)
+        {
+            if (actor == null)
+                return;
+
+            if (actor.gameObject.GetComponentInChildren<SAMLauncher>() != null)
             {
-                if (sam.engageEnemies)
+                foreach (SAMLauncher sam in actor.gameObject.GetComponentsInChildren<SAMLauncher>())
                 {
-                    if (sam.engagingTarget)
+                    if (sam.engageEnemies)
                     {
-                        CheesesAIDebugTools.DrawLabel(sam.actor.position, $"ENGAGING {sam.engagedTarget.name}");
+                        if (sam.engagingTarget)
+                        {
+                            GizmoUtils.DrawLabel(sam.actor.position, $"ENGAGING {sam.engagedTarget.name}");
+                        }
+                        else
+                        {
+                            GizmoUtils.DrawLabel(sam.actor.position, $"No target.");
+                        }
                     }
                     else
                     {
-                        CheesesAIDebugTools.DrawLabel(sam.actor.position, $"No target.");
+                        GizmoUtils.DrawLabel(sam.actor.position, $"Not engaging.");
+                    }
+                }
+            }
+
+            foreach (IRSamLauncher irSAM in actor.gameObject.GetComponentsInChildren<IRSamLauncher>())
+            {
+                if (irSAM.engageEnemies)
+                {
+                    if (irSAM.isEngaging)
+                    {
+                        GizmoUtils.DrawLabel(irSAM.headLookTf.position, $"ENGAGING {irSAM.targetFinder.attackingTarget.name}");
+                    }
+                    else
+                    {
+                        GizmoUtils.DrawLabel(irSAM.headLookTf.position, $"No target.");
                     }
                 }
                 else
                 {
-                    CheesesAIDebugTools.DrawLabel(sam.actor.position, $"Not engaging.");
+                    GizmoUtils.DrawLabel(irSAM.headLookTf.position, $"Not engaging.");
                 }
             }
         }
 
-        foreach (IRSamLauncher irSAM in actor.gameObject.GetComponentsInChildren<IRSamLauncher>())
+        protected override void WindowFunction(int windowID)
         {
-            if (irSAM.engageEnemies)
+            if (actor == null)
             {
-                if (irSAM.isEngaging)
-                {
-                    CheesesAIDebugTools.DrawLabel(irSAM.headLookTf.position, $"ENGAGING {irSAM.targetFinder.attackingTarget.name}");
-                }
-                else
-                {
-                    CheesesAIDebugTools.DrawLabel(irSAM.headLookTf.position, $"No target.");
-                }
+                GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+                GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+                return;
             }
-            else
-            {
-                CheesesAIDebugTools.DrawLabel(irSAM.headLookTf.position, $"Not engaging.");
-            }
-        }
-    }
 
-    protected override void WindowFunction(int windowID)
-    {
-        if (actor == null)
-        {
-            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            GUI.Label(new Rect(20, 20, 160, 20), $"Radar SAM Ammount: {actor.gameObject.GetComponentsInChildren<SAMLauncher>().Length}");
+            GUI.Label(new Rect(20, 40, 160, 20), $"IR SAM Ammount: {actor.gameObject.GetComponentsInChildren<IRSamLauncher>().Length}");
+
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-            return;
         }
-
-        GUI.Label(new Rect(20, 20, 160, 20), $"Radar SAM Ammount: {actor.gameObject.GetComponentsInChildren<SAMLauncher>().Length}");
-        GUI.Label(new Rect(20, 40, 160, 20), $"IR SAM Ammount: {actor.gameObject.GetComponentsInChildren<IRSamLauncher>().Length}");
-
-        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
     }
 }

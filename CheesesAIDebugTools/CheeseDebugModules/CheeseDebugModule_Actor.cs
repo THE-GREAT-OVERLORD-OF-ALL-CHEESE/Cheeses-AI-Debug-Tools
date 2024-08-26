@@ -1,83 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheeseMods.CheeseDebugTools.CheeseDebugModules;
 using UnityEngine;
 
-public class CheeseDebugModule_Actor : CheeseDebugModule
+namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
 {
-    public CheeseDebugModule_Actor(string name, KeyCode keyCode) : base(name, keyCode)
+    public class CheeseDebugModule_Actor : CheeseDebugModule
     {
-
-    }
-
-    public bool showHealth = true;
-
-    public override void OnGUI(Actor actor)
-    {
-        if (actor == null)
-            return;
-
-        if (actor.gameObject.GetComponentInChildren<Health>() != null && showHealth)
+        public CheeseDebugModule_Actor(string name, KeyCode keyCode) : base(name, keyCode)
         {
-            foreach (Health health in actor.gameObject.GetComponentsInChildren<Health>())
+
+        }
+
+        public bool showHealth = true;
+
+        public override void OnGUI(Actor actor)
+        {
+            if (actor == null)
+                return;
+
+            if (actor.gameObject.GetComponentInChildren<Health>() != null && showHealth)
             {
-                CheesesAIDebugTools.DrawLabel(health.gameObject.transform.position, $"{health.gameObject.name}: {health.currentHealth} / {health.maxHealth}");
+                foreach (Health health in actor.gameObject.GetComponentsInChildren<Health>())
+                {
+                    GizmoUtils.DrawLabel(health.gameObject.transform.position, $"{health.gameObject.name}: {health.currentHealth} / {health.maxHealth}");
+                }
             }
         }
-    }
 
-    protected override void WindowFunction(int windowID)
-    {
-        if (actor == null)
+        protected override void WindowFunction(int windowID)
         {
-            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            if (actor == null)
+            {
+                GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+                GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+                return;
+            }
+
+            GUI.Label(new Rect(20, 20, 160, 20), $"GameObject Name: {actor.gameObject.name}");
+            GUI.Label(new Rect(20, 40, 160, 20), $"Actor Name: {actor.actorName}");
+            GUI.Label(new Rect(20, 60, 160, 20), $"Team: {actor.team}");
+
+            showHealth = GUI.Toggle(new Rect(20, 80, 160, 20), showHealth, "Show Health Text");
+
+            AIUnitSpawn unitSpawn = actor.gameObject.GetComponent<AIUnitSpawn>();
+            if (unitSpawn != null)
+            {
+                if (GUI.Button(new Rect(20, 120, 160, 20), $"Engage"))
+                {
+                    unitSpawn.SetEngageEnemies(true);
+                }
+                if (GUI.Button(new Rect(20, 140, 160, 20), $"Disengage"))
+                {
+                    unitSpawn.SetEngageEnemies(false);
+                }
+                GUI.Label(new Rect(20, 160, 160, 20), $"Engaging Enemies: {unitSpawn.engageEnemies}");
+
+
+                if (GUI.Button(new Rect(20, 200, 160, 20), unitSpawn.invincible ? "Set vincible" : "Set invincible"))
+                {
+                    unitSpawn.SetInvincible(!unitSpawn.invincible);
+                }
+                GUI.Label(new Rect(20, 220, 160, 20), $"Invincible: {unitSpawn.invincible}");
+
+                if (GUI.Button(new Rect(20, 240, 160, 20), "Destroy"))
+                {
+                    unitSpawn.DestroySelf();
+                }
+            }
+            else
+            {
+                GUI.Label(new Rect(20, 120, 160, 20), $"No AIUnitSpawn...");
+            }
+
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-            return;
         }
 
-        GUI.Label(new Rect(20, 20, 160, 20), $"GameObject Name: {actor.gameObject.name}");
-        GUI.Label(new Rect(20, 40, 160, 20), $"Actor Name: {actor.actorName}");
-        GUI.Label(new Rect(20, 60, 160, 20), $"Team: {actor.team}");
-
-        showHealth = GUI.Toggle(new Rect(20, 80, 160, 20), showHealth, "Show Health Text");
-
-        AIUnitSpawn unitSpawn = actor.gameObject.GetComponent<AIUnitSpawn>();
-        if (unitSpawn != null) {
-            if (GUI.Button(new Rect(20, 120, 160, 20), $"Engage"))
-            {
-                unitSpawn.SetEngageEnemies(true);
-            }
-            if (GUI.Button(new Rect(20, 140, 160, 20), $"Disengage"))
-            {
-                unitSpawn.SetEngageEnemies(false);
-            }
-            GUI.Label(new Rect(20, 160, 160, 20), $"Engaging Enemies: {unitSpawn.engageEnemies}");
-
-
-            if (GUI.Button(new Rect(20, 200, 160, 20), unitSpawn.invincible ? "Set vincible" : "Set invincible"))
-            {
-                unitSpawn.SetInvincible(!unitSpawn.invincible);
-            }
-            GUI.Label(new Rect(20, 220, 160, 20), $"Invincible: {unitSpawn.invincible}");
-
-            if (GUI.Button(new Rect(20, 240, 160, 20), "Destroy"))
-            {
-                unitSpawn.DestroySelf();
-            }
-        }
-        else
+        public override void Enable()
         {
-            GUI.Label(new Rect(20, 120, 160, 20), $"No AIUnitSpawn...");
+            base.Enable();
+            windowRect = new Rect(20, 20, 200, 280);
         }
-
-        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-    }
-
-    public override void Enable()
-    {
-        base.Enable();
-        windowRect = new Rect(20, 20, 200, 280);
     }
 }

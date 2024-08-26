@@ -5,20 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public static class FollowPathDebugUtility
+namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools.DebugUtils
 {
-    public static void FollowPathDebugLine(DebugLineManager debugLine, FollowPath path, float width, Color colour)
+    public static class FollowPathDebugUtility
     {
-        List<Vector3> points = new List<Vector3>();
-        foreach (Transform tf in path.pointTransforms)
+        public static void FollowPathDebugLine(DebugLineManager debugLine, FollowPath path, float width, Color colour)
         {
-            points.Add(tf.position);
-        }
+            List<Vector3> points = new List<Vector3>();
+            foreach (Transform tf in path.pointTransforms)
+            {
+                points.Add(tf.position);
+            }
 
-        debugLine.AddLine(
-            new DebugLineManager.DebugLineInfo(
-                points.ToArray()
-                , width, colour)
-            );
+            debugLine.AddLine(
+                new DebugLineManager.DebugLineInfo(
+                    points.ToArray()
+                    , width, colour)
+                );
+        }
     }
 }

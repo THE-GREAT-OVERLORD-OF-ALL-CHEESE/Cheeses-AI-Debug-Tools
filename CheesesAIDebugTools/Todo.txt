@@ -1,0 +1,15 @@
+﻿Todo:
+	-Get auto switch to launched missile to work
+		-Get missile always returns null, why?
+	-Add the option to not switch the floating origin focus
+	-Add mod debug
+		-basically a modloader menu for pancake
+	-MP Debug
+		-lots of mp information would be nice to see
+		-Maybe controls for the host?
+	-More AI commands
+		-Lots of these are tedious to add, im lazy
+	-Mission editor debug
+		-Allow the user to see triggers in a list and activate them manually?
+	-Unit list
+		-like BDA from back in the day :)

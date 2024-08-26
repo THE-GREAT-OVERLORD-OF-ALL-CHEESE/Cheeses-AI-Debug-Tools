@@ -1,113 +1,112 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheeseMods.CheeseDebugTools.CheeseDebugModules;
 using UnityEngine;
 
-public class CheeseDebugModule_Flight : CheeseDebugModule
+namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
 {
-    public CheeseDebugModule_Flight(string name, KeyCode keyCode) : base(name, keyCode)
+    public class CheeseDebugModule_Flight : CheeseDebugModule
     {
-        debugLines = new DebugLineManager();
-    }
-
-    public DebugLineManager debugLines;
-
-    public bool showEngineDebug = true;
-
-    public override void OnGUI(Actor actor)
-    {
-        if (actor == null)
-            return;
-
-        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
+        public CheeseDebugModule_Flight(string name, KeyCode keyCode) : base(name, keyCode)
         {
-            foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
-            {
-                string engineString = GetEngineText(engine);
-
-                CheesesAIDebugTools.DrawLabel(engine.thrustTransform.position, engineString);
-            }
+            debugLines = new DebugLineManager();
         }
-    }
 
-    public override void LateUpdate(Actor actor)
-    {
-        if (actor == null)
-            return;
+        public DebugLineManager debugLines;
 
-        base.LateUpdate(actor);
+        public bool showEngineDebug = true;
 
-        if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
+        public override void OnGUI(Actor actor)
         {
-            foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
+            if (actor == null)
+                return;
+
+            if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
             {
-                debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { engine.thrustTransform.position, engine.thrustTransform.position + engine.thrustTransform.forward * 5f }, 1, Color.white));
+                foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
+                {
+                    string engineString = GetEngineText(engine);
+
+                    GizmoUtils.DrawLabel(engine.thrustTransform.position, engineString);
+                }
             }
         }
 
-        debugLines.UpdateLines();
-    }
-
-    public string GetEngineText(ModuleEngine engine)
-    {
-        string engineString = "";
-
-        engineString += $"Engine: {engine.gameObject.name}\n";
-        engineString += $"Input Throttle: {engine.inputThrottle}\n";
-        engineString += $"Final Throttle: {engine.finalThrottle}\n";
-        engineString += $"Final Thrust: {engine.finalThrust}\n";
-
-        engineString += "\n";
-
-        engineString += $"Output RPM: {engine.outputRPM}\n";
-        engineString += $"Display RPM: {engine.displayedRPM}\n";
-
-        if (engine.startingUp)
+        public override void LateUpdate(Actor actor)
         {
-            engineString += $"Starting\n";
+            if (actor == null)
+                return;
+
+            base.LateUpdate(actor);
+
+            if (actor.gameObject.GetComponentInChildren<ModuleEngine>() != null && showEngineDebug)
+            {
+                foreach (ModuleEngine engine in actor.gameObject.GetComponentsInChildren<ModuleEngine>())
+                {
+                    debugLines.AddLine(new DebugLineManager.DebugLineInfo(new Vector3[] { engine.thrustTransform.position, engine.thrustTransform.position + engine.thrustTransform.forward * 5f }, 1, Color.white));
+                }
+            }
+
+            debugLines.UpdateLines();
         }
-        if (engine.startedUp)
-        {
-            engineString += $"Running\n";
-        }
-        if (engine.shuttingDown)
-        {
-            engineString += $"Shutting down...\n";
-        }
-        if (engine.failed)
-        {
-            engineString += $"ENGINE FAILED\n";
-        }
-        return engineString;
-    }
 
-    protected override void WindowFunction(int windowID)
-    {
-        if (actor == null)
+        public string GetEngineText(ModuleEngine engine)
         {
-            GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+            string engineString = "";
+
+            engineString += $"Engine: {engine.gameObject.name}\n";
+            engineString += $"Input Throttle: {engine.inputThrottle}\n";
+            engineString += $"Final Throttle: {engine.finalThrottle}\n";
+            engineString += $"Final Thrust: {engine.finalThrust}\n";
+
+            engineString += "\n";
+
+            engineString += $"Output RPM: {engine.outputRPM}\n";
+            engineString += $"Display RPM: {engine.displayedRPM}\n";
+
+            if (engine.startingUp)
+            {
+                engineString += $"Starting\n";
+            }
+            if (engine.startedUp)
+            {
+                engineString += $"Running\n";
+            }
+            if (engine.shuttingDown)
+            {
+                engineString += $"Shutting down...\n";
+            }
+            if (engine.failed)
+            {
+                engineString += $"ENGINE FAILED\n";
+            }
+            return engineString;
+        }
+
+        protected override void WindowFunction(int windowID)
+        {
+            if (actor == null)
+            {
+                GUI.Label(new Rect(20, 20, 160, 20), "No actor...");
+                GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+                return;
+            }
+
+            showEngineDebug = GUI.Toggle(new Rect(20, 20, 160, 20), showEngineDebug, "Show Engine Debug");
+
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-            return;
         }
 
-        showEngineDebug = GUI.Toggle(new Rect(20, 20, 160, 20), showEngineDebug, "Show Engine Debug");
+        public override void Enable()
+        {
+            base.Enable();
 
-        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-    }
+            windowRect = new Rect(20, 20, 200, 40);
+        }
 
-    public override void Enable()
-    {
-        base.Enable();
+        public override void Disable()
+        {
+            base.Disable();
 
-        windowRect = new Rect(20, 20, 200, 40);
-    }
-
-    public override void Dissable()
-    {
-        base.Dissable();
-
-        debugLines.DestroyAllLineRenderers();
+            debugLines.DestroyAllLineRenderers();
+        }
     }
 }
