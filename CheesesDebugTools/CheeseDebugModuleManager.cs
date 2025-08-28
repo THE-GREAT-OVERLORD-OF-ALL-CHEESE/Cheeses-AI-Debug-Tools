@@ -1,4 +1,5 @@
 ﻿using CheeseMods.CheeseDebugTools.CheeseDebugModules;
+using CheesesDebugTools;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,7 +56,7 @@ namespace CheeseMods.CheeseDebugTools
             if (hidden)
                 return;
 
-            int windowID = 1;
+            int windowID = CheeseDebugConsts.imguiWindowId + 1;
 
             Actor actor = null;
             if (CheesesDebugTools.instance.debugCam != null)
@@ -84,7 +85,7 @@ namespace CheeseMods.CheeseDebugTools
 
                 windowID++;
             }
-            windowRect = GUI.Window(0, windowRect, WindowFunction, "Cheeses AI Debug");
+            windowRect = GUI.Window(CheeseDebugConsts.imguiWindowId, windowRect, WindowFunction, "Cheeses AI Debug");
         }
 
         private static Rect windowRect = new Rect(20, 20, 200, 600);

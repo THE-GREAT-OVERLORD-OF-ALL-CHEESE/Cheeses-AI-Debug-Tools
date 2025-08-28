@@ -45,7 +45,7 @@ namespace CheeseMods.CheeseDebugTools
                 {
                     Ray ray = debugCam.cam.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                    if (Physics.Raycast(ray, out hit))
                     {
                         Actor actor = hit.collider.gameObject.GetComponentInParent<Actor>();
                         if (actor != null)

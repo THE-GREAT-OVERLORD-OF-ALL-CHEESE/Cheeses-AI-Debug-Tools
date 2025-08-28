@@ -90,18 +90,19 @@ namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
                 {
                     GUI.Label(new Rect(20, 60, 360, 20), $"No voice profile...");
                 }
+                GUI.Label(new Rect(20, 80, 360, 20), $"Do Radio Comms: {aiPilot.doRadioComms}");
 
 
 
-                GUI.Label(new Rect(20, 100, 360, 20), $"Command state: {aiPilot.commandState}");
-                GUI.Label(new Rect(20, 120, 360, 20), $"Queued command state: {(AIPilot.CommandStates)aiPilotTraverse.Field("queuedCommand").GetValue()}");
-                GUI.Label(new Rect(20, 140, 360, 20), $"Takeoff command state: {(TakeOffStates)aiPilotTraverse.Field("takeOffState").GetValue()}");
-                GUI.Label(new Rect(20, 160, 360, 20), $"Cat takeoff command state: {(CTOStates)aiPilotTraverse.Field("ctoState").GetValue()}");
-                GUI.Label(new Rect(20, 180, 360, 20), $"Landing command state: {(LandingStates)aiPilotTraverse.Field("landingState").GetValue()}");
-                GUI.Label(new Rect(20, 200, 360, 20), $"Vertical landing command state: {(LandOnPadStates)aiPilotTraverse.Field("landOnPadState").GetValue()}");
+                GUI.Label(new Rect(20, 120, 360, 20), $"Command state: {aiPilot.commandState}");
+                GUI.Label(new Rect(20, 140, 360, 20), $"Queued command state: {(AIPilot.CommandStates)aiPilotTraverse.Field("queuedCommand").GetValue()}");
+                GUI.Label(new Rect(20, 160, 360, 20), $"Takeoff command state: {(TakeOffStates)aiPilotTraverse.Field("takeOffState").GetValue()}");
+                GUI.Label(new Rect(20, 180, 360, 20), $"Cat takeoff command state: {(CTOStates)aiPilotTraverse.Field("ctoState").GetValue()}");
+                GUI.Label(new Rect(20, 200, 360, 20), $"Landing command state: {(LandingStates)aiPilotTraverse.Field("landingState").GetValue()}");
+                GUI.Label(new Rect(20, 220, 360, 20), $"Vertical landing command state: {(LandOnPadStates)aiPilotTraverse.Field("landOnPadState").GetValue()}");
 
-                GUI.Label(new Rect(20, 240, 360, 20), $"Rearm after landing: {(bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()}");
-                GUI.Label(new Rect(20, 260, 360, 20), $"Take off after landing: {(bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()}");
+                GUI.Label(new Rect(20, 260, 360, 20), $"Rearm after landing: {(bool)aiPilotTraverse.Field("rearmAfterLanding").GetValue()}");
+                GUI.Label(new Rect(20, 280, 360, 20), $"Take off after landing: {(bool)aiPilotTraverse.Field("takeOffAfterLanding").GetValue()}");
             }
             else
             {
@@ -156,7 +157,7 @@ namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
         {
             base.Enable();
 
-            windowRect = new Rect(20, 20, 400, 300);
+            windowRect = new Rect(20, 20, 420, 300);
         }
 
         public override void Disable()

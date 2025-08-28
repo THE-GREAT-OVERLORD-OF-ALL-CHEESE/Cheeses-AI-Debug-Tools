@@ -13,15 +13,17 @@ namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
 
         public void Awake()
         {
-            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Actor("Actor Debug", KeyCode.Alpha2)));
-            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Detection("Detection Debug", KeyCode.Alpha3)));
+            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Actor("Actor Debug", KeyCode.None)));
+            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_VTEvents("VTEvents", KeyCode.None)));
+            //loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Detection("Detection Debug", KeyCode.None))); //broken
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_AICommand("AI Commander", KeyCode.None)));
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_AIPilot("AI Pilot Debug", KeyCode.None)));
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_AutoPilot("Auto Pilot Debug", KeyCode.None)));
+            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_FlightInfo("Flight Info", KeyCode.None)));
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Flight("Flight Debug", KeyCode.None)));
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_SAM("SAM Debug", KeyCode.None)));
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Ship("Ship Debug", KeyCode.None)));
-            loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Missile("Missile Debug", KeyCode.None)));
+            //loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Missile("Missile Debug", KeyCode.None))); //untested
             loadedModules.Add(CheeseDebugModuleManager.AddDebugModule(new CheeseDebugModule_Misc("Misc Debug", KeyCode.None)));
 
             Debug.Log("Cheeses AI Debug Tools: Loaded all modules!");

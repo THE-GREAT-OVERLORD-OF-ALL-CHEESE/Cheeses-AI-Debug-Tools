@@ -254,7 +254,7 @@ namespace CheeseMods.CheeseDebugTools.CheeseAIDebugTools
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Ray ray = CheesesDebugTools.instance.debugCam.cam.ScreenPointToRay(Input.mousePosition);
 
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))

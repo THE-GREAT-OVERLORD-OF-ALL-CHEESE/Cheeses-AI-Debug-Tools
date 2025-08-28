@@ -81,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheeseDebugModules\CheeseDebugModule_AICommand.cs" />
+    <Compile Include="CheeseDebugModules\CheeseDebugModule_FlightInfo.cs" />
+    <Compile Include="CheeseDebugModules\CheeseDebugModule_VTEvents.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Missile.cs" />
     <Compile Include="CheeseDebugModules\CheeseDebugModule_Misc.cs" />
     <Compile Include="DebugUtils\FollowPathUtility.cs" />
